@@ -9,11 +9,26 @@ if (len_argv != 2):
 
 file_name = list_argv[1]
 
-with open(file_name, 'rb') as f:
-    f.seek(0, 2)
-    filesize = f.tell()
+def read_by_chunk(file, size=65536):
+    while True:
+        data = file.read(size)
+        if not data: break
+        
+        yield data
+        
+count = 0
+data  = ""
 
-    random_set = sorted(random.sample(range(filesize), 1))
+with open(file_name, "r") as f:
+    
+    for lines in read_by_chunk(f):
+        count += int(lines.count("\n"))
+        data += lines
+    
+import random
+list_random = random.sample(range(count), 1)
 
-    f.seek(random_set[0])
-    print(f.readline().rstrip()) 
+for _id, line in enumerate(data.splitlines()):
+    if _id == list_random[0]:
+        print(line)
+
